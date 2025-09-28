@@ -1,0 +1,61 @@
+{% extends 'notes/base.html' %}
+
+{% block title %}Delete Note - Personal Notes App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirm Deletion
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">
+                    Are you sure you want to delete this note? This action cannot be undone.
+                </p>
+                
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            {% if note.is_pinned %}
+                                <i class="fas fa-thumbtack text-warning me-1"></i>
+                            {% endif %}
+                            {{ note.title }}
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-muted">
+                            {{ note.content|truncatewords:30|linebreaksbr }}
+                        </p>
+                        <div class="row text-muted small">
+                            <div class="col-sm-6">
+                                <i class="fas fa-calendar-plus me-1"></i>
+                                Created: {{ note.created_at|date:"M d, Y" }}
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <i class="fas fa-clock me-1"></i>
+                                Updated: {{ note.updated_at|date:"M d, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" class="d-flex justify-content-between">
+                    {% csrf_token %}
+                    <a href="{% url 'note_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>
+                        Yes, Delete Note
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

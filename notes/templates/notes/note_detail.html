@@ -1,0 +1,75 @@
+{% extends 'notes/base.html' %}
+
+{% block title %}{{ note.title }} - Personal Notes App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card {% if note.is_pinned %}border-warning{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">
+                    {% if note.is_pinned %}
+                        <i class="fas fa-thumbtack text-warning me-2"></i>
+                    {% endif %}
+                    {{ note.title }}
+                </h4>
+                <div class="btn-group">
+                    <a href="{% url 'note_edit' note.pk %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>
+                        Edit
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form method="post" action="{% url 'note_toggle_pin' note.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">
+                                    {% if note.is_pinned %}
+                                        <i class="fas fa-thumbtack me-1"></i> Unpin Note
+                                    {% else %}
+                                        <i class="far fa-thumbtack me-1"></i> Pin Note
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'note_delete' note.pk %}">
+                                <i class="fas fa-trash me-1"></i> Delete Note
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="note-content" style="white-space: pre-wrap; line-height: 1.6;">{{ note.content }}</div>
+            </div>
+            <div class="card-footer">
+                <div class="row text-muted small">
+                    <div class="col-md-6">
+                        <i class="fas fa-calendar-plus me-1"></i>
+                        <strong>Created:</strong> {{ note.created_at|date:"F d, Y g:i A" }}
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <i class="fas fa-clock me-1"></i>
+                        <strong>Last Updated:</strong> {{ note.updated_at|date:"F d, Y g:i A" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a href="{% url 'note_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Back to Notes
+            </a>
+            <a href="{% url 'note_edit' note.pk %}" class="btn btn-primary ms-2">
+                <i class="fas fa-edit me-1"></i>
+                Edit Note
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

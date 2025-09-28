@@ -1,0 +1,113 @@
+{% extends 'notes/base.html' %}
+
+{% block title %}My Notes - Personal Notes App{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-list me-2"></i>
+                My Notes
+                <span class="badge bg-secondary">{{ notes.count }}</span>
+            </h2>
+            <a href="{% url 'note_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>
+                Create New Note
+            </a>
+        </div>
+
+        {% if notes %}
+            <div class="row">
+                {% for note in notes %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 {% if note.is_pinned %}border-warning pinned-note{% endif %}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mb-0 text-truncate">
+                                {% if note.is_pinned %}
+                                    <i class="fas fa-thumbtack text-warning me-1"></i>
+                                {% endif %}
+                                {{ note.title }}
+                            </h6>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'note_detail' note.pk %}">
+                                            <i class="fas fa-eye me-1"></i> View
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'note_edit' note.pk %}">
+                                            <i class="fas fa-edit me-1"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form method="post" action="{% url 'note_toggle_pin' note.pk %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item">
+                                                {% if note.is_pinned %}
+                                                    <i class="fas fa-thumbtack me-1"></i> Unpin
+                                                {% else %}
+                                                    <i class="far fa-thumbtack me-1"></i> Pin
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{% url 'note_delete' note.pk %}">
+                                            <i class="fas fa-trash me-1"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                {{ note.content|truncatewords:20|linebreaksbr }}
+                            </p>
+                        </div>
+                        <div class="card-footer text-muted small">
+                            <div class="row">
+                                <div class="col">
+                                    <i class="fas fa-calendar-plus me-1"></i>
+                                    {{ note.created_at|date:"M d, Y" }}
+                                </div>
+                                <div class="col text-end">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ note.updated_at|date:"M d, Y" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-sticky-note fa-4x text-muted mb-4"></i>
+                <h4 class="text-muted">No notes yet</h4>
+                <p class="text-muted">Create your first note to get started!</p>
+                <a href="{% url 'note_create' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>
+                    Create Your First Note
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        $('.alert').alert('close');
+    }, 5000);
+});
+</script>
+{% endblock %}
